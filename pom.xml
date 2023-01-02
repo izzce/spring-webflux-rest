@@ -17,7 +17,7 @@
 		<java.version>11</java.version>
 		<org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
 		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
-		<embedded-mongo.version>3.2.8</embedded-mongo.version>
+<!-- 		<embedded-mongo.version>3.2.8</embedded-mongo.version> -->
 	</properties>
 	<dependencies>
 		<dependency>
@@ -40,15 +40,15 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>de.flapdoodle.embed</groupId> -->
+<!-- 			<artifactId>de.flapdoodle.embed.mongo</artifactId> -->
+<!--  			<scope>test</scope> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>de.flapdoodle.embed</groupId>
-			<artifactId>de.flapdoodle.embed.mongo</artifactId>
-<!-- 			<scope>test</scope> -->
-		</dependency>
-		<dependency>
-		    <groupId>cz.jirutka.spring</groupId>
-		    <artifactId>embedmongo-spring</artifactId>
-		    <version>1.3.1</version>
+			<artifactId>de.flapdoodle.embed.mongo.spring27x</artifactId>
+			<version>4.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.projectreactor</groupId>
