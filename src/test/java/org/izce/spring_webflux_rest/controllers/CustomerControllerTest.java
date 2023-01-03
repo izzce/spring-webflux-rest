@@ -28,7 +28,7 @@ class CustomerControllerTest {
 	}
 
 	@Test
-	void testGetAllCategories() {
+	void testGetAllCustomers() {
 		when(customerRepo.findAll()).thenReturn(Flux.just(new Customer("Abc", "Def"), new Customer("Xyz", "123")));
 		
 		var customerList = webTestClient.get()
