@@ -1,6 +1,7 @@
 package org.izce.spring_webflux_rest.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -8,6 +9,7 @@ import org.izce.spring_webflux_rest.domain.Category;
 import org.izce.spring_webflux_rest.repo.CategoryRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Publisher;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import reactor.core.publisher.Flux;
@@ -49,16 +51,49 @@ class CategoryControllerTest {
 		when(categoryRepo.findById("dummy-id")).thenReturn(Mono.just(new Category("Dummy")));
 		
 		var category = webTestClient.get()
-		.uri("/api/v1/categories/dummy-id")
-		.exchange()
-		.expectStatus().isOk()
-		.expectBody(Category.class)
-		.returnResult()
-		.getResponseBody();
+			.uri("/api/v1/categories/dummy-id")
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody(Category.class)
+			.returnResult()
+			.getResponseBody();
 		
 		assertEquals("Dummy", category.getName());
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	void testCreate() {
+		Category exotic = new Category("Exotic");
+		
+		when(categoryRepo.saveAll(any(Publisher.class))).thenReturn(Flux.just(exotic));
+		
+		webTestClient.post()
+			.uri("/api/v1/categories/")
+			.bodyValue(exotic)
+			.exchange()
+			.expectStatus()
+			.isCreated();
+	}
 
+	
+	@Test
+	void testUpdate() {
+		when(categoryRepo.save(any(Category.class))).thenReturn(Mono.just(new Category("Exotic")));
+	
+		Category exoticReturned = webTestClient.put()
+			.uri("/api/v1/categories/dummy-id")
+			.bodyValue(new Category("Exotic-xyz"))
+			.exchange()
+			.expectStatus()
+			.isOk()
+			.expectBody(Category.class)
+			.returnResult()
+			.getResponseBody();
+		
+		assertEquals("Exotic", exoticReturned.getName());
+	
+	}
+	
 }
-
 
