@@ -5,9 +5,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @Document
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Customer {
 
 	@Id

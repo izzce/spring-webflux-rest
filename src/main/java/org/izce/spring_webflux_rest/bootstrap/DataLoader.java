@@ -32,6 +32,7 @@ public class DataLoader implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		Flux.concat(loadCategories(), loadCustomers(), loadVendors()).subscribe(null, null, () -> {
+			// TODO how to convert count().block() to reactive calls?
 			log.info("Category count: " + categoryRepo.count().block());
 			log.info("Customer count: " + customerRepo.count().block());
 			log.info("Vendor count: " + vendorRepo.count().block());
