@@ -7,6 +7,7 @@ import org.izce.spring_webflux_rest.repo.VendorRepo;
 import org.reactivestreams.Publisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -48,5 +49,15 @@ public class VendorController {
 	public Mono<Vendor> update(@PathVariable String id, @RequestBody Vendor vendor) {
 		vendor.setId(id);
 		return vendorRepo.save(vendor);
+	}
+	
+	@PatchMapping("/{id}")
+	public Mono<Vendor> patch(@PathVariable String id, @RequestBody Vendor vendor) {
+		Vendor foundVendor = vendorRepo.findById(id).block();
+		if (!foundVendor.getName().equals(vendor.getName())) {
+			foundVendor.setName(vendor.getName());
+			return vendorRepo.save(foundVendor);
+		}
+		return Mono.just(vendor);
 	}
 }

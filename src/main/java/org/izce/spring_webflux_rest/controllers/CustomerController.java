@@ -7,6 +7,7 @@ import org.izce.spring_webflux_rest.repo.CustomerRepo;
 import org.reactivestreams.Publisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,4 +50,24 @@ public class CustomerController {
 		customer.setId(id);
 		return customerRepo.save(customer);
 	}
+	
+	@PatchMapping("/{id}")
+	public Mono<Customer> patch(@PathVariable String id, @RequestBody Customer customer) {
+		Customer foundCustomer = customerRepo.findById(id).block();
+		boolean isDirty = false;
+		if (!foundCustomer.getFirstname().equals(customer.getFirstname())) {
+			foundCustomer.setFirstname(customer.getFirstname());
+			isDirty = true;
+		}
+		if (!foundCustomer.getLastname().equals(customer.getLastname())) {
+			foundCustomer.setLastname(customer.getLastname());
+			isDirty = true;
+		}
+		if (isDirty) {
+			return customerRepo.save(foundCustomer);
+		}
+		return Mono.just(foundCustomer);
+	}
+	
 }
+

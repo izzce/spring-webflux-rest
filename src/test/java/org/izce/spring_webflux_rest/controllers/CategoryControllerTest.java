@@ -3,6 +3,7 @@ package org.izce.spring_webflux_rest.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.izce.spring_webflux_rest.domain.Category;
@@ -91,8 +92,26 @@ class CategoryControllerTest {
 			.getResponseBody();
 		
 		assertEquals("Exotic", exoticReturned.getName());
-	
 	}
 	
+	@Test
+	void testPatch() {
+		when(categoryRepo.findById("dummy-id")).thenReturn(Mono.just(new Category("Exotic")));
+		when(categoryRepo.save(any(Category.class))).thenReturn(Mono.just(new Category("Exotic")));
+	
+		Category exoticReturned = webTestClient.patch()
+			.uri("/api/v1/categories/dummy-id")
+			.bodyValue(new Category("Exotic-xyz"))
+			.exchange()
+			.expectStatus()
+			.isOk()
+			.expectBody(Category.class)
+			.returnResult()
+			.getResponseBody();
+		
+		assertEquals("Exotic", exoticReturned.getName());
+		
+		verify(categoryRepo).save(any());
+	}
 }
 

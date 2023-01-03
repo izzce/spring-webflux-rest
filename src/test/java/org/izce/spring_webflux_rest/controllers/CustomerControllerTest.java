@@ -95,6 +95,25 @@ class CustomerControllerTest {
 		
 		assertEquals("Dummy1", customerReturned.getFirstname());
 		assertEquals("Dummy2", customerReturned.getLastname());
+	}
+	
+	@Test
+	void testPatch() {
+		when(customerRepo.findById("dummy-id")).thenReturn(Mono.just(new Customer("Dummy1", "Dummy2")));
+		when(customerRepo.save(any(Customer.class))).thenReturn(Mono.just(new Customer("Dummy1", "Dummy2")));
+	
+		Customer customerReturned = webTestClient.patch()
+			.uri("/api/v1/customers/dummy-id")
+			.bodyValue(new Customer("DummyA", "DummyB"))
+			.exchange()
+			.expectStatus()
+			.isOk()
+			.expectBody(Customer.class)
+			.returnResult()
+			.getResponseBody();
+		
+		assertEquals("Dummy1", customerReturned.getFirstname());
+		assertEquals("Dummy2", customerReturned.getLastname());
 	
 	}
 }

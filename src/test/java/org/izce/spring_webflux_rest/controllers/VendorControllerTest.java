@@ -3,6 +3,7 @@ package org.izce.spring_webflux_rest.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.izce.spring_webflux_rest.domain.Vendor;
@@ -92,5 +93,25 @@ class VendorControllerTest {
 	
 	}
 
+	@Test
+	void testPatch() {
+		when(vendorRepo.findById("dummy-id")).thenReturn(Mono.just(new Vendor("Tema")));
+		when(vendorRepo.save(any(Vendor.class))).thenReturn(Mono.just(new Vendor("Tema")));
+	
+		Vendor vendorReturned = webTestClient.patch()
+			.uri("/api/v1/vendors/dummy-id")
+			.bodyValue(new Vendor("Uber-xyz"))
+			.exchange()
+			.expectStatus()
+			.isOk()
+			.expectBody(Vendor.class)
+			.returnResult()
+			.getResponseBody();
+		
+		assertEquals("Tema", vendorReturned.getName());
+		
+		verify(vendorRepo).save(any());
+	}
+	
 }
 
