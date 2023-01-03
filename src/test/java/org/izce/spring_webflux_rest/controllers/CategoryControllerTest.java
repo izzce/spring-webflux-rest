@@ -75,7 +75,6 @@ class CategoryControllerTest {
 			.expectStatus()
 			.isCreated();
 	}
-
 	
 	@Test
 	void testUpdate() {
