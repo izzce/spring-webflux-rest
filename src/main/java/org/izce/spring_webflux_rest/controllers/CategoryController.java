@@ -1,4 +1,4 @@
-package org.izce.spring_webflux_rest.controllers.v1;
+package org.izce.spring_webflux_rest.controllers;
 
 import static org.izce.spring_webflux_rest.Constants.CATEGORY_CONTROLLER_BASE_URL;
 

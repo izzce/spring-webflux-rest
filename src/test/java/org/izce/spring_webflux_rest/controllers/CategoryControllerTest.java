@@ -1,5 +1,6 @@
-package org.izce.spring_webflux_rest.controllers.v1;
+package org.izce.spring_webflux_rest.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,23 +31,32 @@ class CategoryControllerTest {
 	void testGetAllCategories() {
 		when(categoryRepo.findAll()).thenReturn(Flux.just(new Category("Nuts"), new Category("Fruits")));
 		
-		webTestClient.get()
+		var categoryList =  webTestClient.get()
 			.uri("/api/v1/categories/")
 			.exchange()
 			.expectStatus().isOk()
 			.expectBodyList(Category.class)
-			.hasSize(2);
+			.returnResult()
+			.getResponseBody();
+		
+		assertEquals(2, categoryList.size());
+		assertEquals("Nuts", categoryList.get(0).getName());
+		assertEquals("Fruits", categoryList.get(1).getName());
 	}
 
 	@Test
 	void testGetById() {
 		when(categoryRepo.findById("dummy-id")).thenReturn(Mono.just(new Category("Dummy")));
 		
-		webTestClient.get()
+		var category = webTestClient.get()
 		.uri("/api/v1/categories/dummy-id")
 		.exchange()
 		.expectStatus().isOk()
-		.expectBody(Category.class);
+		.expectBody(Category.class)
+		.returnResult()
+		.getResponseBody();
+		
+		assertEquals("Dummy", category.getName());
 	}
 
 }
