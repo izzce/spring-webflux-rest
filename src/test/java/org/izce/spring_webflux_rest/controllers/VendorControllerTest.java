@@ -1,6 +1,7 @@
 package org.izce.spring_webflux_rest.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -8,6 +9,7 @@ import org.izce.spring_webflux_rest.domain.Vendor;
 import org.izce.spring_webflux_rest.repo.VendorRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Publisher;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import reactor.core.publisher.Flux;
@@ -55,6 +57,39 @@ class VendorControllerTest {
 				.getResponseBody();
 
 		assertEquals("Dummy", vendor.getName());
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	void testCreate() {
+		Vendor exotic = new Vendor("Exotic");
+		
+		when(vendorRepo.saveAll(any(Publisher.class))).thenReturn(Flux.just(exotic));
+		
+		webTestClient.post()
+			.uri("/api/v1/vendors/")
+			.bodyValue(exotic)
+			.exchange()
+			.expectStatus()
+			.isCreated();
+	}
+	
+	@Test
+	void testUpdate() {
+		when(vendorRepo.save(any(Vendor.class))).thenReturn(Mono.just(new Vendor("Tema")));
+	
+		Vendor vendorReturned = webTestClient.put()
+			.uri("/api/v1/vendors/dummy-id")
+			.bodyValue(new Vendor("Uber-xyz"))
+			.exchange()
+			.expectStatus()
+			.isOk()
+			.expectBody(Vendor.class)
+			.returnResult()
+			.getResponseBody();
+		
+		assertEquals("Tema", vendorReturned.getName());
+	
 	}
 
 }
